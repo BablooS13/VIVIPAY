@@ -2,10 +2,9 @@ import { useMemo, useState } from 'react'
 import * as XLSX from 'xlsx'
 import accountsFileUrl from './assets/accounts.xlsx?url'
 
-const BASE_URL = 'https://api.h5r1xc.xyz/xxapi/buyitoken/waitpayerpaymentslip'
+const BASE_URL = 'https://qonix.click/xxapi/buyitoken/waitpayerpaymentslip'
 const REQUEST_LIMIT = 200
-const TOKEN_STORAGE_KEY = 'tivrapay-indiatoken'
-
+const TOKEN_STORAGE_KEY = 'vivipay-indiatoken'
 const OUTPUT_HEADERS = [
   'rptNo',
   'orderNo',
@@ -64,14 +63,13 @@ async function fetchWithRetry(url, options, maxRetries = 3) {
   throw new Error('Max retry reached')
 }
 
-async function fetchTivraPayData(indiaToken) {
+async function fetchViviPayData(indiaToken) {
   const options = {
     method: 'GET',
 headers: {
   Accept: 'application/json',
-  indiatoken: indiaToken,
-  'x-rs-cfg-tivpayreqgate': 'A7K9X2M8Q4P1Z'
-},
+  indiatoken: indiaToken
+}
   }
 
   let page = 1
@@ -82,7 +80,7 @@ headers: {
     const params = new URLSearchParams({
       page: String(page),
       limit: String(REQUEST_LIMIT),
-      if_asc: 'false',
+      if_asc: 'true',
       min_amount: '5000',
       max_amount: '100000',
       method: '1',
@@ -206,8 +204,7 @@ function App() {
         throw new Error('No valid 4-digit account numbers in accounts.xlsx')
       }
 
-      const { total, allList } = await fetchTivraPayData(cleanToken)
-
+   const { total, allList } = await fetchViviPayData(cleanToken)
       const normalizedApi = allList.map((item) => {
         const apiLast4 = extractLastFour(item.acctNo)
         const matches = accountMap.get(apiLast4) || []
